@@ -1,9 +1,15 @@
+"use client";
 import React from "react";
 import Link from "next/link";
-import { FaBuilding, FaSearch, FaUserCircle, FaHome } from "react-icons/fa";
+import { FaBuilding, FaSearch, FaUserCircle, FaHome, FaSignOutAlt } from "react-icons/fa";
 import styles from "./dashboard.module.css";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuarioId");
+        window.location.href = "/login";
+    }
     return (
         <div className={styles.dashboardContainer}>
             <aside className={styles.sidebar}>
@@ -28,6 +34,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <FaUserCircle size={20} />
                         <span>Perfil</span>
                     </Link>
+                    <button type="button" className={`${styles.sidebarItem} ${styles.logoutButton}`} onClick={handleLogout}>
+                        <FaSignOutAlt size={20} className={styles.logoutIcon} />
+                        <span>Sair</span>
+                    </button>
                 </nav>
             </aside>
             <main className={styles.mainContent}>

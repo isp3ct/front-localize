@@ -1,3 +1,40 @@
+.fieldset {
+    position: relative;
+    padding: 24px 24px 18px 24px;
+    border: 2.5px solid #6366f1;
+    border-radius: 8px;
+    background: #23272f;
+    margin-bottom: 2rem;
+    transition: border-color 0.2s;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
+}
+
+.legend {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #6366f1;
+    background: #23272f;
+    padding: 0 10px;
+    border-radius: 4px;
+    pointer-events: none;
+    transition: top 0.22s cubic-bezier(.4, 0, .2, 1), font-size 0.22s, color 0.22s, background 0.22s;
+    z-index: 2;
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.08);
+}
+
+.fieldset:focus-within {
+    border-color: #4338ca;
+}
+
+.fieldset:focus-within .legend {
+    top: -12px;
+    left: 18px;
+    font-size: 0.95rem;
+    color: #4338ca;
+    background: #23272f;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.10);
+}
+
 .profileCard {
     background: #23272f;
     border-radius: 1rem;
@@ -16,7 +53,7 @@
     color: #e2e8f0;
     padding: 2.5rem 2rem 2rem 2rem;
     border-radius: 1.2rem;
-    max-width: 480px;
+    max-width: 700px;
     margin: 2.5rem auto;
     box-shadow: 0 4px 24px rgba(30, 41, 59, 0.12);
     display: flex;
@@ -100,16 +137,18 @@
 
 .input {
     width: 100%;
-    padding: 0.85rem 1rem;
+    padding: 1.35rem 1rem 0.65rem 1rem;
     border-radius: 0.5rem;
     border: 1px solid #334155;
     background: #18181b;
     color: #e2e8f0;
     font-size: 1.05rem;
     outline: none;
-    transition: border 0.2s;
+    transition: border 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
     font-family: inherit;
+    margin-bottom: 0.2rem;
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.04);
 }
 
 

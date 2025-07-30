@@ -117,10 +117,9 @@ export default function ProfilePage() {
                 <span className={styles.userEmail}><FaEnvelope /> {form.email}</span>
             </div>
             <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Dados Pessoais</h3>
+                <fieldset className={styles.fieldset}>
+                    <legend className={styles.legend}>Dados Pessoais</legend>
                     <div className={styles.row}>
-                        <label className={styles.label} htmlFor="nome">Nome:</label>
                         <input
                             className={styles.input}
                             id="nome"
@@ -128,13 +127,13 @@ export default function ProfilePage() {
                             value={form.nome}
                             onChange={handleChange}
                             disabled={!edit || loading}
+                            placeholder="Nome"
                         />
                     </div>
-                </div>
-                <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Dados de Acesso</h3>
+                </fieldset>
+                <fieldset className={styles.fieldset}>
+                    <legend className={styles.legend}>Dados de Acesso</legend>
                     <div className={styles.row}>
-                        <label className={styles.label} htmlFor="email">E-mail:</label>
                         <input
                             className={styles.input}
                             id="email"
@@ -142,12 +141,12 @@ export default function ProfilePage() {
                             value={form.email}
                             onChange={handleChange}
                             disabled={!edit || loading}
+                            placeholder="E-mail"
                         />
                     </div>
                     {edit && (
                         <>
                             <div className={styles.row}>
-                                <label className={styles.label} htmlFor="senhaAtual">Senha atual:</label>
                                 <input
                                     className={styles.input}
                                     id="senhaAtual"
@@ -155,12 +154,11 @@ export default function ProfilePage() {
                                     type="password"
                                     value={form.senhaAtual}
                                     onChange={handleChange}
-                                    placeholder="Digite sua senha atual"
+                                    placeholder="Senha atual"
                                     disabled={loading}
                                 />
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.label} htmlFor="senhaNova">Nova senha:</label>
                                 <input
                                     className={styles.input}
                                     id="senhaNova"
@@ -168,12 +166,11 @@ export default function ProfilePage() {
                                     type="password"
                                     value={form.senhaNova}
                                     onChange={handleChange}
-                                    placeholder="Digite a nova senha"
+                                    placeholder="Nova senha"
                                     disabled={loading}
                                 />
                             </div>
                             <div className={styles.row}>
-                                <label className={styles.label} htmlFor="senhaConfirmacao">Confirme a nova senha:</label>
                                 <input
                                     className={styles.input}
                                     id="senhaConfirmacao"
@@ -187,7 +184,7 @@ export default function ProfilePage() {
                             </div>
                         </>
                     )}
-                </div>
+                </fieldset>
                 {error && <div className={styles.errorMsg}>{error}</div>}
                 {success && <div className={styles.successMsg}>{success}</div>}
                 <div className={styles.actions}>
