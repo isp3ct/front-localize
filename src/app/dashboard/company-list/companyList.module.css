@@ -1,0 +1,106 @@
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.pageButton {
+    padding: 0.6rem 1.2rem;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pageButton:disabled {
+    background: #334155;
+    cursor: not-allowed;
+}
+
+.pageInfo {
+    color: #cbd5e1;
+    font-size: 1rem;
+}
+
+.container {
+    background: #18181b;
+    color: #e2e8f0;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 700px;
+    margin: 2rem auto;
+    box-shadow: 0 4px 24px rgba(30, 41, 59, 0.10);
+}
+
+.title {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #334155;
+    background: #222;
+    color: #e2e8f0;
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 2rem;
+    transition: border 0.2s;
+}
+
+.input:focus {
+    border-color: #6366f1;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.card {
+    background: #222;
+    border-radius: 0.7rem;
+    padding: 1.2rem 1rem;
+    box-shadow: 0 2px 8px rgba(30, 41, 59, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card strong {
+    color: #fff;
+    font-size: 1.15rem;
+}
+
+.card span {
+    color: #cbd5e1;
+    font-size: 1rem;
+}
+
+.empty {
+    color: #64748b;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+@media (max-width: 700px) {
+    .container {
+        padding: 1rem;
+        max-width: 98vw;
+    }
+
+    .card {
+        padding: 1rem 0.5rem;
+    }
+}
