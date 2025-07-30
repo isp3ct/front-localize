@@ -15,6 +15,25 @@
     text-align: center;
 }
 
+.errorMsg {
+    color: #ef4444;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    background: #fff0f0;
+    border-radius: 6px;
+    padding: 8px 16px;
+    border: 1px solid #ef4444;
+}
+
+.successMsg {
+    color: #22c55e;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    background: #f0fff0;
+    border-radius: 6px;
+    padding: 8px 16px;
+    border: 1px solid #22c55e;
+}
 
 .form {
     display: flex;

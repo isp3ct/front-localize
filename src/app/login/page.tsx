@@ -1,46 +1,38 @@
-
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const router = useRouter();
+    const [email, setEmail] = React.useState("");
+    const [senha, setSenha] = React.useState("");
+    const [error, setError] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setLoading(true);
         setError("");
+        setLoading(true);
         try {
             const res = await fetch("https://localhost:7175/api/Usuarios/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email,
-                    senha: password
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, senha })
             });
             if (!res.ok) {
-                const data = await res.json();
-                setError(data?.message || "Usuário ou senha inválidos.");
+                setError("Usuário ou senha inválidos.");
                 setLoading(false);
                 return;
             }
             const data = await res.json();
-            if (data?.token) {
+            if (data.token && data.id) {
                 localStorage.setItem("token", data.token);
-                router.push("/dashboard");
+                localStorage.setItem("usuarioId", data.id);
+                window.location.href = "/dashboard/company-create";
             } else {
-                setError("Login mal sucedido.");
+                setError("Retorno inválido do servidor");
             }
-        } catch (err) {
-            setError("Erro de conexão com o servidor.");
+        } catch {
+            setError("Erro ao conectar ao servidor.");
         }
         setLoading(false);
     }
@@ -57,24 +49,20 @@ export default function LoginPage() {
                         required
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        disabled={loading}
                     />
                     <input
                         type="password"
                         placeholder="Senha"
                         className={styles.input}
                         required
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        disabled={loading}
+                        value={senha}
+                        onChange={e => setSenha(e.target.value)}
                     />
                     <button type="submit" className={styles.button} disabled={loading}>
                         {loading ? "Entrando..." : "Entrar"}
                     </button>
                 </form>
-                {error && (
-                    <div style={{ color: "#ef4444", marginTop: "0.5rem", fontSize: "0.95rem" }}>{error}</div>
-                )}
+                {error && <div className={styles.errorMsg}>{error}</div>}
                 <p className={styles.linkText}>
                     Não tem conta? <a href="/register">Registre-se</a>
                 </p>
