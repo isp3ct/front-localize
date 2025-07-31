@@ -1,3 +1,19 @@
+@media (max-width: 600px) {
+    .confirmModalContent {
+        min-width: 90vw;
+        padding: 1rem 0.5rem 1rem 0.5rem;
+        font-size: 0.98rem;
+    }
+
+    .confirmModalTitle {
+        font-size: 1.05rem;
+    }
+
+    .confirmModalText {
+        font-size: 0.98rem;
+    }
+}
+
 .trashButton {
     position: absolute;
     top: 12px;

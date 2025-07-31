@@ -1,3 +1,124 @@
+@media (max-width: 600px) {
+    .profileContainer {
+        padding: 0.5rem;
+    }
+
+    .profileCard {
+        padding: 1rem 0.5rem 1rem 0.5rem;
+        max-width: 98vw;
+        min-width: unset;
+    }
+
+    .avatarArea {
+        margin-bottom: 1rem;
+    }
+
+    .editFieldset,
+    .fieldset,
+    .senhaFieldset {
+        padding: 12px 6px 10px 6px;
+        margin-bottom: 1rem;
+    }
+
+    .editLegend,
+    .legend {
+        font-size: 0.98rem;
+        padding: 0 6px;
+    }
+
+    .editDisplay {
+        font-size: 1rem;
+        gap: 6px;
+    }
+
+    .inlineForm {
+        gap: 4px;
+    }
+
+    .input,
+    .inputNome,
+    .inputEmail {
+        font-size: 0.98rem;
+        padding: 0.65rem;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .inlineButton,
+    .modalSenhaButton,
+    .button,
+    .senhaButton {
+        font-size: 0.98rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .modalSenhaForm {
+        gap: 0.7rem;
+    }
+
+    .modalSenhaActions {
+        gap: 8px;
+        margin-top: 0.7rem;
+    }
+
+    .row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+.editFieldset {
+    position: relative;
+    padding: 20px 20px 14px 20px;
+    border: 2px solid #6366f1;
+    border-radius: 8px;
+    background: #23272f;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+}
+
+.editLegend {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #6366f1;
+    background: #23272f;
+    padding: 0 10px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.06);
+}
+
+.editDisplay {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.editIconButton {
+    background: none;
+    border: none;
+    color: #6366f1;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.18s;
+    margin-left: 4px;
+}
+
+.editIconButton:hover {
+    background: #23272f;
+    color: #4338ca;
+}
+
 .inlineForm {
     display: flex;
     align-items: center;

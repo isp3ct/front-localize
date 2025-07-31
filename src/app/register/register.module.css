@@ -1,3 +1,31 @@
+@media (max-width: 600px) {
+    .registerContainer {
+        padding: 1rem;
+        min-height: 100vh;
+    }
+
+    .authCard {
+        padding: 1.2rem 0.5rem;
+        min-width: 90vw;
+        box-sizing: border-box;
+    }
+
+    .input {
+        font-size: 0.98rem;
+        padding: 0.65rem;
+    }
+
+    .button {
+        font-size: 0.98rem;
+        padding: 0.65rem;
+    }
+
+    .linkText {
+        font-size: 0.92rem;
+        text-align: center;
+    }
+}
+
 .registerContainer {
     min-height: 100vh;
     display: flex;

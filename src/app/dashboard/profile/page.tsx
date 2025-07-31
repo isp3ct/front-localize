@@ -113,20 +113,22 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className={styles.profileCard}>
-            <div className={styles.avatarArea}>
-                <FaUserCircle className={styles.avatar} size={80} />
-                <h2 className={styles.userName}>
+        <div className={styles.profileContainer}>
+            <div className={styles.profileCard}>
+                <div className={styles.avatarArea}>
+                    <FaUserCircle className={styles.avatar} size={80} />
+                </div>
+                <fieldset className={styles.editFieldset}>
+                    <legend className={styles.editLegend}>Nome</legend>
                     {editField === "nome" ? (
                         <form onSubmit={handleSubmit} className={styles.inlineForm}>
                             <input
-                                className={styles.input}
+                                className={styles.input + ' ' + styles.inputNome}
                                 id="nome"
                                 name="nome"
                                 value={form.nome}
                                 onChange={handleChange}
                                 disabled={loading}
-                                style={{ width: 180 }}
                             />
                             <button type="submit" className={styles.inlineButton} disabled={loading}>
                                 Salvar
@@ -136,23 +138,23 @@ export default function ProfilePage() {
                             </button>
                         </form>
                     ) : (
-                        <>
+                        <div className={styles.editDisplay}>
                             {form.nome}
-                            <FaEdit style={{ marginLeft: 8, cursor: "pointer" }} title="Editar nome" onClick={() => setEditField("nome")} />
-                        </>
+                            <button type="button" className={styles.editIconButton} title="Editar nome" onClick={() => setEditField("nome")}> <FaEdit /> </button>
+                        </div>
                     )}
-                </h2>
-                <span className={styles.userEmail}>
+                </fieldset>
+                <fieldset className={styles.editFieldset}>
+                    <legend className={styles.editLegend}>E-mail</legend>
                     {editField === "email" ? (
                         <form onSubmit={handleSubmit} className={styles.inlineForm}>
                             <input
-                                className={styles.input}
+                                className={styles.input + ' ' + styles.inputEmail}
                                 id="email"
                                 name="email"
                                 value={form.email}
                                 onChange={handleChange}
                                 disabled={loading}
-                                style={{ width: 200 }}
                             />
                             <button type="submit" className={styles.inlineButton} disabled={loading}>
                                 Salvar
@@ -162,15 +164,13 @@ export default function ProfilePage() {
                             </button>
                         </form>
                     ) : (
-                        <>
+                        <div className={styles.editDisplay}>
                             <FaEnvelope /> {form.email}
-                            <FaEdit style={{ marginLeft: 8, cursor: "pointer" }} title="Editar e-mail" onClick={() => setEditField("email")} />
-                        </>
+                            <button type="button" className={styles.editIconButton} title="Editar e-mail" onClick={() => setEditField("email")}> <FaEdit /> </button>
+                        </div>
                     )}
-                </span>
-            </div>
-            <div style={{ marginTop: 32 }}>
-                <fieldset className={styles.fieldset}>
+                </fieldset>
+                <fieldset className={styles.fieldset + ' ' + styles.senhaFieldset}>
                     <legend className={styles.legend}>Alterar Senha</legend>
                     {editField === "senha" ? (
                         <form onSubmit={handleSubmit} className={styles.modalSenhaForm}>
@@ -212,7 +212,7 @@ export default function ProfilePage() {
                             </div>
                             <div className={styles.modalSenhaActions}>
                                 <button type="submit" className={styles.modalSenhaButton} disabled={loading}>
-                                    <FaLock style={{ marginRight: 8 }} /> Salvar
+                                    <FaLock className={styles.iconLeft} /> Salvar
                                 </button>
                                 <button type="button" className={styles.modalSenhaButton} onClick={() => setEditField(null)} disabled={loading}>
                                     Cancelar
@@ -220,16 +220,14 @@ export default function ProfilePage() {
                             </div>
                         </form>
                     ) : (
-                        <button type="button" className={styles.button} onClick={() => setEditField("senha")}
-                            style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <FaLock /> Alterar Senha
+                        <button type="button" className={styles.button + ' ' + styles.senhaButton} onClick={() => setEditField("senha")}>
+                            <FaLock className={styles.iconLeft} /> Alterar Senha
                         </button>
                     )}
                 </fieldset>
+                {error && <div className={styles.errorMsg}>{error}</div>}
+                {success && <div className={styles.successMsg}>{success}</div>}
             </div>
-            {error && <div className={styles.errorMsg}>{error}</div>}
-            {success && <div className={styles.successMsg}>{success}</div>}
-
         </div>
     );
 }

@@ -86,10 +86,17 @@ export default function CompanyListPage() {
             <input
                 className={styles.input}
                 type="text"
-                placeholder="Buscar por nome ou CNPJ..."
+                placeholder="Buscar por CNPJ..."
                 value={search}
+                maxLength={18}
+                inputMode="numeric"
                 onChange={e => {
-                    setSearch(e.target.value);
+                    let v = e.target.value.replace(/\D/g, "").slice(0, 14);
+                    v = v.replace(/(\d{2})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d)/, "$1/$2");
+                    v = v.replace(/(\d{4})(\d)/, "$1-$2");
+                    setSearch(v);
                     setPage(1);
                 }}
             />

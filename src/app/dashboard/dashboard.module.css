@@ -1,3 +1,26 @@
+@media (max-width: 600px) {
+    .cardsResumoTop {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .cardResumoFull {
+        padding: 16px 6px 12px 6px;
+        min-width: 98vw;
+        box-sizing: border-box;
+    }
+
+    .cardValor {
+        font-size: 1.5rem;
+        margin-top: 8px;
+    }
+
+    .cardsResumoBottom {
+        margin-top: 12px;
+    }
+}
+
 .cardIconBox {
     width: 100%;
     display: flex;
