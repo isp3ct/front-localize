@@ -3,6 +3,16 @@
 
 Projeto desenvolvido em Next.js para o teste técnico DEV Localize 2025.
 
+## Tecnologias Utilizadas
+
+### Frontend (React + Next.js)
+- Next.js 15 com App Router
+- React 19 + TypeScript
+- Chart.js + react-chartjs-2 (dashboard)
+- CSS Modules + TailwindCSS
+- ESLint / Prettier
+- React Icons
+
 ## Funcionalidades
 
 - **Login e Registro de Usuário**
@@ -39,6 +49,21 @@ Projeto desenvolvido em Next.js para o teste técnico DEV Localize 2025.
 - CORS e autenticação ajustados para ambiente local.
 - Estilização com CSS Modules e ícones do React Icons.
 - Responsividade e experiência visual refinada.
+
+## Estrutura de Pastas (Frontend)
+
+```
+src/
+├── app/
+│   ├── login/
+│   ├── register/
+│   ├── dashboard/
+│   ├── company-list/
+│   ├── company-create/
+│   └── profile/
+├── public/
+├── globals.css
+```
 
 ## Como rodar
 
