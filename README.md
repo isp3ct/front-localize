@@ -65,6 +65,18 @@ src/
 ├── globals.css
 ```
 
+
+## Configuração da API (Backend)
+
+Antes de rodar o frontend, verifique se a porta e o protocolo (http ou https) da sua API estão corretos no arquivo `.env.local` na raiz do projeto:
+
+```
+NEXT_PUBLIC_API_URL_HTTPS=https://localhost:7175
+NEXT_PUBLIC_API_URL_HTTP=http://localhost:5075
+```
+
+Altere conforme a porta e protocolo que sua API estiver rodando.
+
 ## Como rodar
 
 ```bash
