@@ -1,10 +1,12 @@
 
 "use client";
 import React, { useState, useEffect } from "react";
+import { FaUserCircle, FaEnvelope, FaLock, FaEdit } from "react-icons/fa";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import styles from "./profile.module.css";
-import { FaUserCircle, FaEnvelope, FaLock } from "react-icons/fa";
 
 export default function ProfilePage() {
+    useAuthGuard();
     const [form, setForm] = useState({
         nome: "",
         email: "",
@@ -12,7 +14,7 @@ export default function ProfilePage() {
         senhaNova: "",
         senhaConfirmacao: ""
     });
-    const [edit, setEdit] = useState(false);
+    const [editField, setEditField] = useState<null | "nome" | "email" | "senha">(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ export default function ProfilePage() {
             const token = localStorage.getItem("token");
             if (!token) return;
             try {
-                const res = await fetch("https://localhost:7175/api/Usuarios/perfil", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Usuarios/perfil`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -48,7 +50,6 @@ export default function ProfilePage() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!edit) return;
         setLoading(true);
         setError("");
         setSuccess("");
@@ -59,12 +60,12 @@ export default function ProfilePage() {
             return;
         }
 
-        const body: any = {
-            Nome: form.nome,
-            Email: form.email
-        };
-
-        if (form.senhaNova || form.senhaConfirmacao || form.senhaAtual) {
+        let body: any = {};
+        if (editField === "nome") {
+            body = { Nome: form.nome };
+        } else if (editField === "email") {
+            body = { Email: form.email };
+        } else if (editField === "senha") {
             if (!form.senhaAtual) {
                 setError("Digite sua senha atual.");
                 setLoading(false);
@@ -80,13 +81,15 @@ export default function ProfilePage() {
                 setLoading(false);
                 return;
             }
-            body.SenhaAtual = form.senhaAtual;
-            body.SenhaNova = form.senhaNova;
-            body.SenhaConfirmacao = form.senhaConfirmacao;
+            body = {
+                SenhaAtual: form.senhaAtual,
+                SenhaNova: form.senhaNova,
+                SenhaConfirmacao: form.senhaConfirmacao
+            };
         }
 
         try {
-            const res = await fetch("https://localhost:7175/api/Usuarios/perfil", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Usuarios/perfil`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -101,7 +104,7 @@ export default function ProfilePage() {
                 return;
             }
             setSuccess("Perfil atualizado com sucesso!");
-            setEdit(false);
+            setEditField(null);
             setForm(f => ({ ...f, senhaAtual: "", senhaNova: "", senhaConfirmacao: "" }));
         } catch {
             setError("Erro ao tentar atualizar perfil.");
@@ -113,39 +116,64 @@ export default function ProfilePage() {
         <div className={styles.profileCard}>
             <div className={styles.avatarArea}>
                 <FaUserCircle className={styles.avatar} size={80} />
-                <h2 className={styles.userName}>{form.nome}</h2>
-                <span className={styles.userEmail}><FaEnvelope /> {form.email}</span>
-            </div>
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <fieldset className={styles.fieldset}>
-                    <legend className={styles.legend}>Dados Pessoais</legend>
-                    <div className={styles.row}>
-                        <input
-                            className={styles.input}
-                            id="nome"
-                            name="nome"
-                            value={form.nome}
-                            onChange={handleChange}
-                            disabled={!edit || loading}
-                            placeholder="Nome"
-                        />
-                    </div>
-                </fieldset>
-                <fieldset className={styles.fieldset}>
-                    <legend className={styles.legend}>Dados de Acesso</legend>
-                    <div className={styles.row}>
-                        <input
-                            className={styles.input}
-                            id="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            disabled={!edit || loading}
-                            placeholder="E-mail"
-                        />
-                    </div>
-                    {edit && (
+                <h2 className={styles.userName}>
+                    {editField === "nome" ? (
+                        <form onSubmit={handleSubmit} className={styles.inlineForm}>
+                            <input
+                                className={styles.input}
+                                id="nome"
+                                name="nome"
+                                value={form.nome}
+                                onChange={handleChange}
+                                disabled={loading}
+                                style={{ width: 180 }}
+                            />
+                            <button type="submit" className={styles.inlineButton} disabled={loading}>
+                                Salvar
+                            </button>
+                            <button type="button" className={styles.inlineButton} onClick={() => setEditField(null)} disabled={loading}>
+                                Cancelar
+                            </button>
+                        </form>
+                    ) : (
                         <>
+                            {form.nome}
+                            <FaEdit style={{ marginLeft: 8, cursor: "pointer" }} title="Editar nome" onClick={() => setEditField("nome")} />
+                        </>
+                    )}
+                </h2>
+                <span className={styles.userEmail}>
+                    {editField === "email" ? (
+                        <form onSubmit={handleSubmit} className={styles.inlineForm}>
+                            <input
+                                className={styles.input}
+                                id="email"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                                disabled={loading}
+                                style={{ width: 200 }}
+                            />
+                            <button type="submit" className={styles.inlineButton} disabled={loading}>
+                                Salvar
+                            </button>
+                            <button type="button" className={styles.inlineButton} onClick={() => setEditField(null)} disabled={loading}>
+                                Cancelar
+                            </button>
+                        </form>
+                    ) : (
+                        <>
+                            <FaEnvelope /> {form.email}
+                            <FaEdit style={{ marginLeft: 8, cursor: "pointer" }} title="Editar e-mail" onClick={() => setEditField("email")} />
+                        </>
+                    )}
+                </span>
+            </div>
+            <div style={{ marginTop: 32 }}>
+                <fieldset className={styles.fieldset}>
+                    <legend className={styles.legend}>Alterar Senha</legend>
+                    {editField === "senha" ? (
+                        <form onSubmit={handleSubmit} className={styles.modalSenhaForm}>
                             <div className={styles.row}>
                                 <input
                                     className={styles.input}
@@ -182,23 +210,26 @@ export default function ProfilePage() {
                                     disabled={loading}
                                 />
                             </div>
-                        </>
+                            <div className={styles.modalSenhaActions}>
+                                <button type="submit" className={styles.modalSenhaButton} disabled={loading}>
+                                    <FaLock style={{ marginRight: 8 }} /> Salvar
+                                </button>
+                                <button type="button" className={styles.modalSenhaButton} onClick={() => setEditField(null)} disabled={loading}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    ) : (
+                        <button type="button" className={styles.button} onClick={() => setEditField("senha")}
+                            style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <FaLock /> Alterar Senha
+                        </button>
                     )}
                 </fieldset>
-                {error && <div className={styles.errorMsg}>{error}</div>}
-                {success && <div className={styles.successMsg}>{success}</div>}
-                <div className={styles.actions}>
-                    {!edit ? (
-                        <button type="button" className={styles.button} onClick={() => setEdit(true)} disabled={loading}>
-                            Editar Perfil
-                        </button>
-                    ) : (
-                        <button type="submit" className={styles.button} disabled={loading}>
-                            <FaLock style={{ marginRight: 8 }} /> Salvar
-                        </button>
-                    )}
-                </div>
-            </form>
+            </div>
+            {error && <div className={styles.errorMsg}>{error}</div>}
+            {success && <div className={styles.successMsg}>{success}</div>}
+
         </div>
     );
 }

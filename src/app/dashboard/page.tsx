@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaBuilding, FaClock } from "react-icons/fa";
 import styles from "./dashboard.module.css";
 import { Pie } from "react-chartjs-2";
@@ -11,6 +11,8 @@ import {
 } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+import { useAuthGuard } from "@/hooks/useAuthGuard";
+
 type EmpresaResumo = {
   id: string;
   nomeEmpresarial: string;
@@ -18,18 +20,20 @@ type EmpresaResumo = {
   dataCadastro: string;
 };
 
+
 export default function DashboardPage() {
+  useAuthGuard();
   const [empresas, setEmpresas] = useState<EmpresaResumo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function fetchEmpresas() {
       setLoading(true);
       setError("");
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://localhost:7175/api/Empresas/minhas", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Empresas/minhas`, {
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -37,7 +41,7 @@ export default function DashboardPage() {
         });
         if (!res.ok) throw new Error("Erro ao buscar empresas");
         const data = await res.json();
-        setEmpresas(data);
+        setEmpresas(Array.isArray(data) ? data.filter(e => e.ativo !== false) : []);
       } catch {
         setError("Erro ao buscar empresas cadastradas.");
       }

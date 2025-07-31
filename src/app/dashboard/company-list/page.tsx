@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import styles from "./companyList.module.css";
 
 export default function CompanyListPage() {
+    useAuthGuard();
     type Empresa = {
         id: string;
         nomeEmpresarial: string;
@@ -38,7 +40,7 @@ export default function CompanyListPage() {
             const token = localStorage.getItem("token");
             if (!token) return setError("Usuário não autenticado.");
             try {
-                const res = await fetch("https://localhost:7175/api/Empresas/minhas", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Empresas/minhas`, {
                     method: "GET",
                     headers: { "Authorization": `Bearer ${token}` }
                 });
@@ -58,10 +60,18 @@ export default function CompanyListPage() {
         fetchEmpresas();
     }, []);
 
-    const empresasFiltradas = empresas.filter(e =>
-        e.nomeEmpresarial.toLowerCase().includes(search.toLowerCase()) ||
-        e.cnpj.includes(search)
-    );
+    function removeMascaraCnpj(cnpj: string) {
+        return cnpj.replace(/\D/g, "");
+    }
+
+    const empresasFiltradas = empresas.filter(e => {
+        const searchLower = search.toLowerCase();
+        const cnpjEmpresa = e.cnpj || "";
+        if (e.nomeEmpresarial.toLowerCase().includes(searchLower)) return true;
+        if (cnpjEmpresa.includes(search)) return true;
+        if (removeMascaraCnpj(cnpjEmpresa).includes(removeMascaraCnpj(search))) return true;
+        return false;
+    });
 
     const totalPages = Math.ceil(empresasFiltradas.length / pageSize);
     const empresasPaginadas = empresasFiltradas.slice((page - 1) * pageSize, page * pageSize);
@@ -146,76 +156,80 @@ export default function CompanyListPage() {
                                 }}
                             >
                                 Confirmar
-                            </button>
+                            </button >
                             <button
                                 className={`${styles.confirmModalButton} ${styles.cancel}`}
                                 onClick={() => setConfirmModal({ open: false, empresa: null })}
                             >
                                 Cancelar
                             </button>
-                        </div>
-                    </div>
-                </div>
+                        </div >
+                    </div >
+                </div >
             )}
-            {totalPages > 1 && (
-                <div className={styles.pagination}>
-                    <button
-                        className={styles.pageButton}
-                        onClick={() => handlePageChange(page - 1)}
-                        disabled={page === 1}
-                    >
-                        Anterior
-                    </button>
-                    <span className={styles.pageInfo}>
-                        Página {page} de {totalPages}
-                    </span>
-                    <button
-                        className={styles.pageButton}
-                        onClick={() => handlePageChange(page + 1)}
-                        disabled={page === totalPages}
-                    >
-                        Próxima
-                    </button>
-                </div>
-            )}
-
-            {/* Modal de detalhes da empresa */}
-            {empresaSelecionada && (
-                <div className={styles.modalOverlay} onClick={() => setEmpresaSelecionada(null)}>
-                    <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3 className={styles.modalTitle}>Detalhes da Empresa</h3>
-                        <p><strong>Nome Empresarial:</strong> {empresaSelecionada.nomeEmpresarial}</p>
-                        {empresaSelecionada.nomeFantasia && <p><strong>Nome Fantasia:</strong> {empresaSelecionada.nomeFantasia}</p>}
-                        <p><strong>CNPJ:</strong> {empresaSelecionada.cnpj}</p>
-                        {empresaSelecionada.situacao && <p><strong>Situação:</strong> {empresaSelecionada.situacao}</p>}
-                        {empresaSelecionada.dataAbertura && <p><strong>Data de Abertura:</strong> {empresaSelecionada.dataAbertura}</p>}
-                        {empresaSelecionada.tipo && <p><strong>Tipo:</strong> {empresaSelecionada.tipo}</p>}
-                        {empresaSelecionada.naturezaJuridica && <p><strong>Natureza Jurídica:</strong> {empresaSelecionada.naturezaJuridica}</p>}
-                        {empresaSelecionada.atividadesPrincipais && empresaSelecionada.atividadesPrincipais.length > 0 && (
-                            <div>
-                                <strong>Atividades Principais:</strong>
-                                <ul style={{ marginTop: 4, marginBottom: 4 }}>
-                                    {empresaSelecionada.atividadesPrincipais.map((atv, idx) => (
-                                        <li key={idx}>{atv}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                        {empresaSelecionada.logradouro && <p><strong>Logradouro:</strong> {empresaSelecionada.logradouro}</p>}
-                        {empresaSelecionada.numero && <p><strong>Número:</strong> {empresaSelecionada.numero}</p>}
-                        {empresaSelecionada.complemento && <p><strong>Complemento:</strong> {empresaSelecionada.complemento}</p>}
-                        {empresaSelecionada.bairro && <p><strong>Bairro:</strong> {empresaSelecionada.bairro}</p>}
-                        <p><strong>Município:</strong> {empresaSelecionada.municipio}</p>
-                        <p><strong>UF:</strong> {empresaSelecionada.uf}</p>
-                        {empresaSelecionada.cep && <p><strong>CEP:</strong> {empresaSelecionada.cep}</p>}
-                        {empresaSelecionada.filial && <p><strong>Filial:</strong> {empresaSelecionada.filial}</p>}
-                        {empresaSelecionada.empresaId && <p><strong>Empresa ID:</strong> {empresaSelecionada.empresaId}</p>}
-                        <button className={styles.modalCloseButton} onClick={() => setEmpresaSelecionada(null)}>
-                            Fechar
+            {
+                totalPages > 1 && (
+                    <div className={styles.pagination}>
+                        <button
+                            className={styles.pageButton}
+                            onClick={() => handlePageChange(page - 1)}
+                            disabled={page === 1}
+                        >
+                            Anterior
+                        </button>
+                        <span className={styles.pageInfo}>
+                            Página {page} de {totalPages}
+                        </span>
+                        <button
+                            className={styles.pageButton}
+                            onClick={() => handlePageChange(page + 1)}
+                            disabled={page === totalPages}
+                        >
+                            Próxima
                         </button>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+
+            {/* Modal de detalhes da empresa */}
+            {
+                empresaSelecionada && (
+                    <div className={styles.modalOverlay} onClick={() => setEmpresaSelecionada(null)}>
+                        <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                            <h3 className={styles.modalTitle}>Detalhes da Empresa</h3>
+                            <p><strong>Nome Empresarial:</strong> {empresaSelecionada.nomeEmpresarial}</p>
+                            {empresaSelecionada.nomeFantasia && <p><strong>Nome Fantasia:</strong> {empresaSelecionada.nomeFantasia}</p>}
+                            <p><strong>CNPJ:</strong> {empresaSelecionada.cnpj}</p>
+                            {empresaSelecionada.situacao && <p><strong>Situação:</strong> {empresaSelecionada.situacao}</p>}
+                            {empresaSelecionada.dataAbertura && <p><strong>Data de Abertura:</strong> {empresaSelecionada.dataAbertura}</p>}
+                            {empresaSelecionada.tipo && <p><strong>Tipo:</strong> {empresaSelecionada.tipo}</p>}
+                            {empresaSelecionada.naturezaJuridica && <p><strong>Natureza Jurídica:</strong> {empresaSelecionada.naturezaJuridica}</p>}
+                            {empresaSelecionada.atividadesPrincipais && empresaSelecionada.atividadesPrincipais.length > 0 && (
+                                <div>
+                                    <strong>Atividades Principais:</strong>
+                                    <ul style={{ marginTop: 4, marginBottom: 4 }}>
+                                        {empresaSelecionada.atividadesPrincipais.map((atv, idx) => (
+                                            <li key={idx}>{atv}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            {empresaSelecionada.logradouro && <p><strong>Logradouro:</strong> {empresaSelecionada.logradouro}</p>}
+                            {empresaSelecionada.numero && <p><strong>Número:</strong> {empresaSelecionada.numero}</p>}
+                            {empresaSelecionada.complemento && <p><strong>Complemento:</strong> {empresaSelecionada.complemento}</p>}
+                            {empresaSelecionada.bairro && <p><strong>Bairro:</strong> {empresaSelecionada.bairro}</p>}
+                            <p><strong>Município:</strong> {empresaSelecionada.municipio}</p>
+                            <p><strong>UF:</strong> {empresaSelecionada.uf}</p>
+                            {empresaSelecionada.cep && <p><strong>CEP:</strong> {empresaSelecionada.cep}</p>}
+                            {empresaSelecionada.filial && <p><strong>Filial:</strong> {empresaSelecionada.filial}</p>}
+                            {empresaSelecionada.empresaId && <p><strong>Empresa ID:</strong> {empresaSelecionada.empresaId}</p>}
+                            <button className={styles.modalCloseButton} onClick={() => setEmpresaSelecionada(null)}>
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

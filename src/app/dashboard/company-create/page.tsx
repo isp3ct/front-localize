@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 type Atividade = {
     code: string;
@@ -28,6 +29,7 @@ type FormType = {
 import styles from "./companyCreate.module.css";
 
 export default function CompanyCreatePage() {
+    useAuthGuard();
     function maskCnpj(value: string) {
         let v = value.replace(/\D/g, "").slice(0, 14);
         v = v.replace(/(\d{2})(\d)/, "$1.$2");
@@ -163,7 +165,7 @@ export default function CompanyCreatePage() {
                 Cep: normalize(form.cep),
                 UsuarioId: usuarioId
             };
-            const res = await fetch("https://localhost:7175/api/Empresas", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Empresas`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
