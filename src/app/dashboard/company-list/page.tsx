@@ -23,12 +23,14 @@ export default function CompanyListPage() {
         usuarioId?: string;
         empresaId?: string;
         filial?: string;
+        ativo?: boolean;
     };
     const [empresas, setEmpresas] = useState<Empresa[]>([]);
     const [empresaSelecionada, setEmpresaSelecionada] = useState<Empresa | null>(null);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const [error, setError] = useState("");
+    const [confirmModal, setConfirmModal] = useState<{ open: boolean, empresa: Empresa | null }>({ open: false, empresa: null });
     const pageSize = 5;
 
     useEffect(() => {
@@ -83,18 +85,78 @@ export default function CompanyListPage() {
             />
             {error && <div className={styles.empty}>{error}</div>}
             <div className={styles.list}>
-                {empresasPaginadas.length === 0 && !error ? (
+                {empresasPaginadas.filter(e => e.ativo === true).length === 0 && !error ? (
                     <p className={styles.empty}>Nenhuma empresa encontrada.</p>
                 ) : (
-                    empresasPaginadas.map(e => (
-                        <div key={e.id} className={styles.card} onClick={() => setEmpresaSelecionada(e)} style={{ cursor: "pointer" }}>
-                            <strong>{e.nomeEmpresarial}</strong>
-                            <span>CNPJ: {e.cnpj}</span>
-                            <span>{e.municipio} - {e.uf}</span>
-                        </div>
-                    ))
+                    empresasPaginadas
+                        .filter(e => e.ativo === true)
+                        .map(e => (
+                            <div key={e.id} className={styles.card} style={{ position: "relative", cursor: "pointer" }}>
+                                <button
+                                    className={styles.trashButton}
+                                    title="Inativar empresa"
+                                    onClick={ev => {
+                                        ev.stopPropagation();
+                                        setConfirmModal({ open: true, empresa: e });
+                                    }}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#ef4444" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm2 3h14v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9zm5 2v7h2v-7h-2z" /></svg>
+                                </button>
+                                <div onClick={() => setEmpresaSelecionada(e)}>
+                                    <strong>{e.nomeEmpresarial}</strong><br />
+                                    <span>CNPJ: {e.cnpj}</span><br />
+                                    <span>{e.municipio} - {e.uf}</span>
+                                </div>
+                            </div>
+                        ))
                 )}
             </div>
+
+            {/* Modal de confirmação de exclusão */}
+            {confirmModal.open && confirmModal.empresa && (
+                <div className={styles.confirmModalOverlay}>
+                    <div className={styles.confirmModalContent}>
+                        <div className={styles.confirmModalTitle}>Confirmar Inativação</div>
+                        <div className={styles.confirmModalText}>
+                            Tem certeza que deseja inativar a empresa <strong>{confirmModal.empresa.nomeEmpresarial}</strong>?<br />
+                            Essa ação não pode ser desfeita.
+                        </div>
+                        <div className={styles.confirmModalActions}>
+                            <button
+                                className={`${styles.confirmModalButton} ${styles.confirm}`}
+                                onClick={async () => {
+                                    const token = localStorage.getItem("token");
+                                    try {
+                                        const res = await fetch(`https://localhost:7175/api/Empresas/InactiveEmpresas?id=${confirmModal.empresa?.id}`, {
+                                            method: "PUT",
+                                            headers: {
+                                                "Authorization": `Bearer ${token}`,
+                                                "Content-Type": "application/json"
+                                            }
+                                        });
+                                        if (res.ok) {
+                                            setEmpresas(empresas.filter(emp => emp.id !== confirmModal.empresa?.id));
+                                            setConfirmModal({ open: false, empresa: null });
+                                        } else {
+                                            alert("Erro ao inativar empresa.");
+                                        }
+                                    } catch {
+                                        alert("Erro de conexão.");
+                                    }
+                                }}
+                            >
+                                Confirmar
+                            </button>
+                            <button
+                                className={`${styles.confirmModalButton} ${styles.cancel}`}
+                                onClick={() => setConfirmModal({ open: false, empresa: null })}
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {totalPages > 1 && (
                 <div className={styles.pagination}>
                     <button
@@ -122,7 +184,6 @@ export default function CompanyListPage() {
                 <div className={styles.modalOverlay} onClick={() => setEmpresaSelecionada(null)}>
                     <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <h3 className={styles.modalTitle}>Detalhes da Empresa</h3>
-                        <p><strong>ID:</strong> {empresaSelecionada.id}</p>
                         <p><strong>Nome Empresarial:</strong> {empresaSelecionada.nomeEmpresarial}</p>
                         {empresaSelecionada.nomeFantasia && <p><strong>Nome Fantasia:</strong> {empresaSelecionada.nomeFantasia}</p>}
                         <p><strong>CNPJ:</strong> {empresaSelecionada.cnpj}</p>

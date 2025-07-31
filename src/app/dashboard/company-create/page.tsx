@@ -88,7 +88,8 @@ export default function CompanyCreatePage() {
                 }
             );
             if (!res.ok) {
-                setErrorConsulta("CNPJ não encontrado ou inválido.");
+                const errorText = await res.text();
+                setErrorConsulta(errorText || "CNPJ não encontrado ou inválido.");
                 setLoadingConsulta(false);
                 return;
             }
@@ -147,7 +148,7 @@ export default function CompanyCreatePage() {
             const dto = {
                 NomeEmpresarial: normalize(form.nomeEmpresarial),
                 NomeFantasia: normalize(form.nomeFantasia),
-                Cnpj: normalize(form.cnpj.replace(/\D/g, "")),
+                Cnpj: normalize(form.cnpj),
                 Situacao: normalize(form.situacao),
                 Abertura: normalize(form.abertura),
                 Tipo: normalize(form.tipo),
