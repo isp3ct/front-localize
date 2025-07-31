@@ -77,7 +77,7 @@ Acesse [http://localhost:3000](http://localhost:3000).
 
 O backend (API .NET) está em outro repositório, conforme orientações da vaga.
 Link para o repositório:
-[Backend LocalizeAPI](https://github.com/isp3ct/localizeBackendAPI)
+- [Backend LocalizeAPI](https://github.com/isp3ct/localizeBackendAPI)
 
 ---
 
