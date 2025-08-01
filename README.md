@@ -37,8 +37,7 @@ Projeto desenvolvido em Next.js para o teste técnico DEV Localize 2025.
   - Botão de inativação com confirmação.
 
 - **Perfil do Usuário**
-  - Edição de dados pessoais e senha.
-  - Fieldset/legend animado e fixo.
+  - Edição senha.
 
 - **Logout**
   - Botão com ícone, removendo sessão do usuário.
@@ -72,8 +71,8 @@ Antes de rodar o frontend, verifique se a porta e o protocolo (http ou https) da
 
 ```
 NEXT_PUBLIC_API_URL_HTTPS=https://localhost:7175
-NEXT_PUBLIC_API_URL_HTTP=http://localhost:5075
 ```
+- Observação, caso inicie a API em HTTP, altere o port para 5075
 
 Altere conforme a porta e protocolo que sua API estiver rodando.
 

@@ -8,16 +8,33 @@ import styles from "./profile.module.css";
 export default function ProfilePage() {
     useAuthGuard();
     const [form, setForm] = useState({
-        nome: "",
-        email: "",
         senhaAtual: "",
         senhaNova: "",
         senhaConfirmacao: ""
     });
-    const [editField, setEditField] = useState<null | "nome" | "email" | "senha">(null);
+    const [editField, setEditField] = useState<null | "senha">(null);
+    const [user, setUser] = useState<{ nome: string; email: string } | null>(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+
+    React.useEffect(() => {
+        if (!editField) return;
+        function handleClickOutside(e: MouseEvent) {
+            const editForms = document.querySelectorAll('.edit-form, .senha-form');
+            let clickedInside = false;
+            editForms.forEach(form => {
+                if (form.contains(e.target as Node)) {
+                    clickedInside = true;
+                }
+            });
+            if (!clickedInside) {
+                setEditField(null);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [editField]);
 
     useEffect(() => {
         async function fetchProfile() {
@@ -32,13 +49,9 @@ export default function ProfilePage() {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setForm(f => ({ ...f, nome: data.nome, email: data.email }));
-                } else {
-                    setError("Não foi possível carregar os dados do perfil.");
+                    setUser({ nome: data.nome, email: data.email });
                 }
-            } catch {
-                setError("Erro de conexão ao buscar perfil.");
-            }
+            } catch { }
         }
         fetchProfile();
     }, []);
@@ -60,33 +73,26 @@ export default function ProfilePage() {
             return;
         }
 
-        let body: any = {};
-        if (editField === "nome") {
-            body = { Nome: form.nome };
-        } else if (editField === "email") {
-            body = { Email: form.email };
-        } else if (editField === "senha") {
-            if (!form.senhaAtual) {
-                setError("Digite sua senha atual.");
-                setLoading(false);
-                return;
-            }
-            if (form.senhaNova.length < 6) {
-                setError("A nova senha deve ter pelo menos 6 caracteres.");
-                setLoading(false);
-                return;
-            }
-            if (form.senhaNova !== form.senhaConfirmacao) {
-                setError("A confirmação da senha não corresponde à nova senha.");
-                setLoading(false);
-                return;
-            }
-            body = {
-                SenhaAtual: form.senhaAtual,
-                SenhaNova: form.senhaNova,
-                SenhaConfirmacao: form.senhaConfirmacao
-            };
+        if (!form.senhaAtual) {
+            setError("Digite sua senha atual.");
+            setLoading(false);
+            return;
         }
+        if (form.senhaNova.length < 6) {
+            setError("A nova senha deve ter pelo menos 6 caracteres.");
+            setLoading(false);
+            return;
+        }
+        if (form.senhaNova !== form.senhaConfirmacao) {
+            setError("A confirmação da senha não corresponde à nova senha.");
+            setLoading(false);
+            return;
+        }
+        const body = {
+            SenhaAtual: form.senhaAtual,
+            SenhaNova: form.senhaNova,
+            SenhaConfirmacao: form.senhaConfirmacao
+        };
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_HTTPS}/api/Usuarios/perfil`, {
@@ -103,13 +109,18 @@ export default function ProfilePage() {
                 setLoading(false);
                 return;
             }
-            setSuccess("Perfil atualizado com sucesso!");
+            setSuccess("Senha alterada com sucesso!");
             setEditField(null);
             setForm(f => ({ ...f, senhaAtual: "", senhaNova: "", senhaConfirmacao: "" }));
         } catch {
-            setError("Erro ao tentar atualizar perfil.");
+            setError("Erro ao tentar atualizar senha.");
         }
         setLoading(false);
+    }
+
+    function handleCancelEdit() {
+        setForm(f => ({ ...f, senhaAtual: "", senhaNova: "", senhaConfirmacao: "" }));
+        setEditField(null);
     }
 
     return (
@@ -117,63 +128,17 @@ export default function ProfilePage() {
             <div className={styles.profileCard}>
                 <div className={styles.avatarArea}>
                     <FaUserCircle className={styles.avatar} size={80} />
+                    {user && (
+                        <>
+                            <div className={styles.userName}>{user.nome}</div>
+                            <div className={styles.userEmail}><FaEnvelope /> {user.email}</div>
+                        </>
+                    )}
                 </div>
-                <fieldset className={styles.editFieldset}>
-                    <legend className={styles.editLegend}>Nome</legend>
-                    {editField === "nome" ? (
-                        <form onSubmit={handleSubmit} className={styles.inlineForm}>
-                            <input
-                                className={styles.input + ' ' + styles.inputNome}
-                                id="nome"
-                                name="nome"
-                                value={form.nome}
-                                onChange={handleChange}
-                                disabled={loading}
-                            />
-                            <button type="submit" className={styles.inlineButton} disabled={loading}>
-                                Salvar
-                            </button>
-                            <button type="button" className={styles.inlineButton} onClick={() => setEditField(null)} disabled={loading}>
-                                Cancelar
-                            </button>
-                        </form>
-                    ) : (
-                        <div className={styles.editDisplay}>
-                            {form.nome}
-                            <button type="button" className={styles.editIconButton} title="Editar nome" onClick={() => setEditField("nome")}> <FaEdit /> </button>
-                        </div>
-                    )}
-                </fieldset>
-                <fieldset className={styles.editFieldset}>
-                    <legend className={styles.editLegend}>E-mail</legend>
-                    {editField === "email" ? (
-                        <form onSubmit={handleSubmit} className={styles.inlineForm}>
-                            <input
-                                className={styles.input + ' ' + styles.inputEmail}
-                                id="email"
-                                name="email"
-                                value={form.email}
-                                onChange={handleChange}
-                                disabled={loading}
-                            />
-                            <button type="submit" className={styles.inlineButton} disabled={loading}>
-                                Salvar
-                            </button>
-                            <button type="button" className={styles.inlineButton} onClick={() => setEditField(null)} disabled={loading}>
-                                Cancelar
-                            </button>
-                        </form>
-                    ) : (
-                        <div className={styles.editDisplay}>
-                            <FaEnvelope /> {form.email}
-                            <button type="button" className={styles.editIconButton} title="Editar e-mail" onClick={() => setEditField("email")}> <FaEdit /> </button>
-                        </div>
-                    )}
-                </fieldset>
                 <fieldset className={styles.fieldset + ' ' + styles.senhaFieldset}>
                     <legend className={styles.legend}>Alterar Senha</legend>
                     {editField === "senha" ? (
-                        <form onSubmit={handleSubmit} className={styles.modalSenhaForm}>
+                        <form onSubmit={handleSubmit} className={styles.modalSenhaForm + ' senha-form'}>
                             <div className={styles.row}>
                                 <input
                                     className={styles.input}
@@ -214,7 +179,7 @@ export default function ProfilePage() {
                                 <button type="submit" className={styles.modalSenhaButton} disabled={loading}>
                                     <FaLock className={styles.iconLeft} /> Salvar
                                 </button>
-                                <button type="button" className={styles.modalSenhaButton} onClick={() => setEditField(null)} disabled={loading}>
+                                <button type="button" className={styles.modalSenhaButton} onClick={handleCancelEdit} disabled={loading}>
                                     Cancelar
                                 </button>
                             </div>

@@ -82,14 +82,31 @@
 }
 
 .editLegend {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #6366f1;
-    background: #23272f;
-    padding: 0 10px;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.06);
+
+    .fieldset,
+    .senhaFieldset {
+        padding: 12px 6px 10px 6px;
+        margin-bottom: 1rem;
+    }
+
+    .legend {
+        font-size: 0.98rem;
+        padding: 0 6px;
+    }
+
+    .modalSenhaForm {
+        gap: 0.7rem;
+    }
+
+    .modalSenhaActions {
+        gap: 8px;
+        margin-top: 0.7rem;
+    }
+
+    .row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
 
 .editDisplay {
@@ -189,13 +206,20 @@
 
 .legend {
     font-size: 1.08rem;
-    font-weight: 600;
-    color: #6366f1;
-    background: #23272f;
-    padding: 0 10px;
+
+    .input {
+        font-size: 0.98rem;
+        padding: 0.65rem;
+        min-width: 0;
+        max-width: 100%;
+    }
+
     border-radius: 4px;
     pointer-events: none;
-    transition: top 0.22s cubic-bezier(.4, 0, .2, 1), font-size 0.22s, color 0.22s, background 0.22s;
+    transition: top 0.22s cubic-bezier(.4, 0, .2, 1),
+    font-size 0.22s,
+    color 0.22s,
+    background 0.22s;
     z-index: 2;
     box-shadow: 0 1px 4px rgba(99, 102, 241, 0.08);
 }
