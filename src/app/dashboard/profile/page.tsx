@@ -89,6 +89,8 @@ export default function ProfilePage() {
             return;
         }
         const body = {
+            Nome: user?.nome || "",
+            Email: user?.email || "",
             SenhaAtual: form.senhaAtual,
             SenhaNova: form.senhaNova,
             SenhaConfirmacao: form.senhaConfirmacao
@@ -139,6 +141,16 @@ export default function ProfilePage() {
                     <legend className={styles.legend}>Alterar Senha</legend>
                     {editField === "senha" ? (
                         <form onSubmit={handleSubmit} className={styles.modalSenhaForm + ' senha-form'}>
+                            {/* Campo oculto de username para acessibilidade */}
+                            <input
+                                type="text"
+                                name="username"
+                                autoComplete="username"
+                                value={user?.email || ""}
+                                style={{ display: "none" }}
+                                tabIndex={-1}
+                                readOnly
+                            />
                             <div className={styles.row}>
                                 <input
                                     className={styles.input}
@@ -149,6 +161,7 @@ export default function ProfilePage() {
                                     onChange={handleChange}
                                     placeholder="Senha atual"
                                     disabled={loading}
+                                    autoComplete="current-password"
                                 />
                             </div>
                             <div className={styles.row}>
@@ -161,6 +174,7 @@ export default function ProfilePage() {
                                     onChange={handleChange}
                                     placeholder="Nova senha"
                                     disabled={loading}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <div className={styles.row}>
@@ -173,6 +187,7 @@ export default function ProfilePage() {
                                     onChange={handleChange}
                                     placeholder="Confirme a nova senha"
                                     disabled={loading}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <div className={styles.modalSenhaActions}>
